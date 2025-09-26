@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Home | Hyper-local Community</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  * { 
+    margin:0; 
+    padding:0; 
+    box-sizing:border-box;
+   }
+  body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    background: url("https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=1600&q=80") no-repeat center center/cover;
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+  .overlay {
+    position: fixed; 
+    top: 0; left: 0; 
+    width: 100%; 
+    height: 100%;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6));
+    z-index: 0;
+  }
+
+  header {
+    position: relative; 
+    z-index: 2;
+    background: rgba(76,175,80,0.9);
+    color: white;
+    padding: 1rem 2rem;
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    flex-wrap: wrap;
+    transition: background 0.5s;
+  }
+  header:hover { background: rgba(76,175,80,1); }
+
+  header h1 { 
+    font-size: 2rem; 
+    font-weight: bold; 
+    animation: fadeInDown 1s ease forwards;
+   }
+
+  @keyframes fadeInDown {
+    0% { 
+      opacity:0; 
+      transform:translateY(-20px);
+    }
+    100% { 
+      opacity:1; 
+      transform:translateY(0);
+    }
+  }
+
+  /* Desktop nav */
+  nav.desktop-nav ul {
+    display: flex;
+    list-style:none;
+    gap:30px;
+    align-items:center;
+    animation: fadeIn 1.2s ease forwards;
+  }
+  nav.desktop-nav ul li a {
+    color:white;
+    text-decoration:none;
+    font-weight:bold;
+    padding:8px 15px;
+    border-radius:5px;
+    transition: 0.3s;
+    position: relative;
+  }
+  nav.desktop-nav ul li a::after {
+    content:'';
+    position:absolute;
+    width:0;
+    height:2px;
+    background:#ffd700;
+    left:0; bottom:0;
+    transition: width 0.3s;
+  }
+  nav.desktop-nav ul li a:hover::after { 
+    width:100%; 
+  }
+  nav.desktop-nav ul li a:hover,
+  nav.desktop-nav ul li a.active { 
+    color: #ffd700;
+   }
+
+  /* Mobile hamburger */
+  .menu-toggle { 
+    display:none; 
+    font-size:1.8rem; 
+    background:none; 
+    border:none; 
+    color:white; 
+    cursor:pointer; 
+    transition:0.3s; }
+  .menu-toggle:hover { 
+    transform:rotate(90deg);
+   }
+
+  /* Mobile nav */
+  nav.mobile-nav {
+    display:none; 
+    position:absolute; 
+    top:70px; 
+    right:10px;
+    background: rgba(0,0,0,0.85); 
+    padding:0; 
+    border-radius:10px;
+    flex-direction: column; 
+    overflow:hidden;
+    max-height: 0;
+    transition: max-height 0.5s ease;
+    z-index:3;
+  }
+  nav.mobile-nav a {
+    color:white;
+    text-decoration:none; 
+    padding:12px 20px; 
+    display:block;
+    border-bottom:1px solid rgba(255,255,255,0.1);
+    opacity:0; 
+    transition: opacity 0.3s ease;
+  }
+  nav.mobile-nav.show a { 
+    opacity:1;
+   }
+
+  @media (max-width: 768px){
+    nav.desktop-nav { 
+      display:none;
+     }
+    .menu-toggle { 
+      display:block;
+     }
+  }
+
+  .logout-btn {
+    width: 100px; 
+    background: #e53935; 
+    border:none; 
+    padding:0.6rem 1.2rem;
+    border-radius: 8px; 
+    color:white; 
+    font-weight:bold; 
+    cursor:pointer;
+    transition: all 0.3s;
+  }
+  .logout-btn:hover { 
+    background: #b71c1c; 
+    transform: scale(1.05); 
+  }
+
+  .container { 
+    position: relative; 
+    z-index:1; 
+    max-width:900px; 
+    margin:2rem auto; 
+    padding:1rem; 
+    animation: fadeIn 1s ease;}
+  @keyframes fadeIn { 
+    from {opacity:0;} to {opacity:1;} }
+
+  h2 { 
+    text-align:center; 
+    margin-bottom:1rem; 
+    color:#fff; 
+    text-shadow: 1px 1px 6px rgba(0,0,0,0.8); }
+
+  .post-form, .post-board {
+    background: rgba(255,255,255,0.95); 
+    padding:1.5rem; 
+    border-radius:16px;
+    margin-bottom:2rem; 
+    box-shadow:0 4px 12px rgba(0,0,0,0.3);
+    transition: transform 0.3s;
+  }
+  .post-form:hover, .post-board:hover { 
+    transform: translateY(-3px);
+   }
+
+  input, textarea, button {
+    width:100%; 
+    padding:0.8rem; 
+    margin-bottom:0.8rem; 
+    border-radius:10px; 
+    border:1px solid #ccc; 
+    font-size:1rem;
+  }
+  button { 
+    background:#4CAF50; 
+    color:white; 
+    font-weight:bold; 
+    cursor:pointer; 
+    border:none; 
+    transition:0.3s;
+   }
+  button:hover { 
+    background:#388e3c; 
+    transform:scale(1.02);
+   }
+
+  .send { 
+    width:40%;
+   }
+  .post-card { 
+    background:#fff; 
+    padding:1.2rem; 
+    margin-bottom:1rem; 
+    border-radius:14px; 
+    box-shadow:0 2px 8px rgba(0,0,0,0.2); 
+    transition: transform 0.3s, 
+    box-shadow 0.3s;
+   }
+  .post-card:hover { 
+    transform: translateY(-3px); 
+    box-shadow:0 4px 16px rgba(0,0,0,0.3);
+   }
+  .poster-info { 
+    font-size:0.9rem; 
+    color:#777; 
+    margin-bottom:0.5rem;
+   }
+  .rating i { 
+    color:#ccc; 
+    cursor:pointer; 
+    margin-right:0.2rem; 
+    transition: transform 0.2s, color 0.3s;
+   }
+  .rating i:hover {
+    transform: scale(1.2); 
+    color: gold;
+   }
+
+  .chat-box { 
+    background:#f9f9f9;
+    border-radius:10px; 
+    padding:0.6rem; 
+    max-height:180px; 
+    overflow-y:auto; 
+    margin-top:0.6rem;
+   }
+  .chat-box div {
+    margin-bottom:0.3rem; 
+    padding:0.4rem 0.6rem; 
+    background:#e8f5e9; 
+    border-radius:8px; 
+    font-size:0.9rem;
+   }
+  .chat-input { 
+    display:flex; 
+    gap:0.5rem; 
+    margin-top:0.6rem;
+   }
+  .chat-input input {
+     flex:1;
+     }
+
+  footer {
+    background: rgba(0,0,0,0.573); 
+    color:#fff; 
+    text-align:center; 
+    padding:1.2rem; 
+    margin-top:3rem; 
+    font-size:0.9rem; 
+    animation: fadeIn 1.5s ease;
+    }
+</style>
+</head>
+<body>
+<div class="overlay"></div>
+
+<header>
+  <h1>🏘️ Hyper-Local Community</h1>
+
+  <!-- Desktop Menu -->
+  <nav class="desktop-nav">
+    <ul>
+      <li><a href="login page.html">Login</a></li>
+      <li><a href="register.html">Register</a></li>
+      <li><a href="#" class="active">Home</a></li>
+      <li><a href="help.html">Help</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Mobile Hamburger -->
+  <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+
+  <!-- Mobile Menu -->
+  <nav class="mobile-nav" id="mobileMenu">
+    <a href="login page.html" onclick="toggleMenu()">Login</a>
+    <a href="register.html" onclick="toggleMenu()">Register</a>
+    <a href="#" onclick="toggleMenu()">Home</a>
+    <a href="help.html" onclick="toggleMenu()">Help</a>
+    <a href="contact.html" onclick="toggleMenu()">Contact</a>
+  </nav>
+
+  <button class="logout-btn" onclick="logoutUser()">Logout</button>
+</header>
+
+<div class="container">
+  <h2>Post a Work</h2>
+  <div class="post-form">
+    <input type="text" id="workTitle" placeholder="Work Title" required>
+    <textarea id="workDetails" placeholder="Describe the work..." required></textarea>
+    <button onclick="addPost()">Post Work</button>
+  </div>
+
+  <h2>Community Posts</h2>
+  <div id="postBoard" class="post-board"></div>
+</div>
+
+<footer>
+  <p>🌍 Hyper-local Community | Connecting neighbors with ease</p>
+  <p>&copy; 2025 Community Connect. All Rights Reserved.</p>
+</footer>
+
+<script>
+function toggleMenu(){
+  const menu=document.getElementById("mobileMenu");
+  if(menu.style.maxHeight && menu.style.maxHeight!=="0px"){
+    menu.style.maxHeight="0px"; menu.classList.remove("show");
+  } else{
+    menu.style.maxHeight="300px"; menu.classList.add("show");
+  }
+}
+
+const savedUser = JSON.parse(localStorage.getItem('user'));
+if(!savedUser){ alert('Please login first'); window.location.href='login page.html'; }
+
+let posts = [
+  {title:'Need help with gardening', details:'Looking for someone to help plant flowers.', user:savedUser.name, email:savedUser.email, chat:[]},
+  {title:'Offering Guitar Lessons', details:'Free lessons on weekends.', user:savedUser.name, email:savedUser.email, chat:[]}
+];
+
+function renderPosts(){
+  const container=document.getElementById('postBoard');
+  container.innerHTML='';
+  posts.forEach((post,index)=>{
+    const div=document.createElement('div');
+    div.className='post-card';
+    div.innerHTML=`
+      <div class='poster-info'><strong>${post.user}</strong> | Email: ${post.email}</div>
+      <h4>${post.title}</h4>
+      <p>${post.details}</p>
+      <div class='rating'>
+        <i class='fa fa-star' onclick='ratePost(this)'></i>
+        <i class='fa fa-star' onclick='ratePost(this)'></i>
+        <i class='fa fa-star' onclick='ratePost(this)'></i>
+        <i class='fa fa-star' onclick='ratePost(this)'></i>
+        <i class='fa fa-star' onclick='ratePost(this)'></i>
+      </div>
+      <div class='chat-box' id='chatBox${index}'>${post.chat.map(msg=>`<div>${msg}</div>`).join('')}</div>
+      <div class='chat-input'>
+        <input type='text' id='chatInput${index}' placeholder='Type a message...'>
+        <button onclick='sendChat(${index})' class='send'>Send</button>
+      </div>`;
+    container.appendChild(div);
+  });
+}
+
+function addPost(){
+  const title=document.getElementById('workTitle').value;
+  const details=document.getElementById('workDetails').value;
+  if(title && details){
+    posts.push({title, details, user:savedUser.name, email:savedUser.email, chat:[]});
+    renderPosts();
+    document.getElementById('workTitle').value='';
+    document.getElementById('workDetails').value='';
+  }
+}
+
+function ratePost(star){
+  const stars=star.parentElement.querySelectorAll('i');
+  let index=Array.from(stars).indexOf(star);
+  stars.forEach((s,i)=>{ s.style.color=i<=index?'gold':'#ccc'; });
+}
+
+function sendChat(postIndex){
+  const input=document.getElementById(`chatInput${postIndex}`);
+  if(input.value.trim()!==''){
+    posts[postIndex].chat.push(`${savedUser.name}: ${input.value}`);
+    renderPosts();
+  }
+}
+
+function logoutUser(){ localStorage.removeItem('user'); window.location.href='login page.html'; }
+
+renderPosts();
+</script>
+</body>
+</html>
